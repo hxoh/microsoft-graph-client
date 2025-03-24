@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "ostruct"
 require "httparty"
 require "securerandom"
 require_relative "graph/version"
@@ -51,7 +52,7 @@ module Microsoft
         url,
         headers: headers,
         query: params,
-        body: @body_formatter.call(body, method: method).to_json,
+        body: @body_formatter.call(body, method: method),
         parser: InstanceParser
       )
 
@@ -90,9 +91,9 @@ module Microsoft
     end
 
     class InstanceParser < HTTParty::Parser
-      def parse
-        return nil unless body
-
+      protected
+      
+      def json
         JSON.parse(body, object_class: JSONStruct)
       end
     end
